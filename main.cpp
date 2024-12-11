@@ -19,6 +19,8 @@ void rentCar(vector<shared_ptr<BaseCar>>& cars);
 
 int main() {
     cout << "Starting Car Rental System...\n" << endl;
+
+    // figure out where the file system is running
     cout << "Current working directory: " << filesystem::current_path() << endl;
 
     // load data - not sure how to make this so it isn't local
@@ -39,7 +41,6 @@ int main() {
 
         if (cin.fail()) {
             cin.clear();
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
             cout << "Invalid input. Please try again.\n";
             continue;
         }
