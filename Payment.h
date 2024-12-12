@@ -3,58 +3,53 @@
 #include <string>
 #include <iostream>
 #include <fstream>
-using namespace std;
 
-class Payment{
-    protected:
-    static const string admin_ledger;
+class Payment {
+protected:
+    static const std::string admin_ledger;
     int id;
-    int cardNum;
-    int amount;
+    long cardNum;
+    double amount;
     int secCode;
     int expDate;
-    string billAddress;
-    string nameCard;
-    
+    std::string billAddress;
+    std::string nameCard;
 
-    //constructors
-    public:
+public:
+    // Constructors
     Payment();
-    Payment(int,int,int,int,int,string,string);
+    Payment(int id, long cardNum, double amount, int secCode, int expDate, std::string billAddress, std::string nameCard);
 
-    //setter and getter functions
-
+    // Setter and Getter Functions
     int getId() const;
     void setId(int id);
-    int getCardNum() const;
-    void setCardNum(int cardNum);
-    int getAmount() const;
-    void setAmount(int amount);
+    long getCardNum() const;
+    void setCardNum(long cardNum);
+    double getAmount() const;
+    void setAmount(double amount);
     int getSecCode() const;
     void setSecCode(int secCode);
     int getExpDate() const;
     void setExpDate(int expDate);
-    string getBillAddress() const;
-    void setBillAddress(string billAddress);
-    string getNameCard() const;
-    void setNameCard(string nameCard);
+    std::string getBillAddress() const;
+    void setBillAddress(const std::string& billAddress);
+    std::string getNameCard() const;
+    void setNameCard(const std::string& nameCard);
 
     // Serialize and Deserialize
-    void serialize(ostream& out) const;
-    void deserialize(istream& in);
+    void serialize(std::ostream& out) const;
+    void deserialize(std::istream& in);
 
-    // Overridden Methods
-    string getType() const override;
-    void serialize(ostream& out) const override;
-    void deserialize(istream& in) override;
-    void display() const override;
+    // Displaying Information
+    void display() const;
 
-    //Ledger
-    void saveToLedger() cosnt;
-    void displayPayentDetails() const;
+    // Ledger
+    void saveToLedger() const;
+    void displayPaymentDetails() const;
+
+    // Static Methods
     static Payment add();
-    static bool update(int);
-
-}
+    static bool update(int id);
+};
 
 #endif
