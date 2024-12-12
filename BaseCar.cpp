@@ -50,7 +50,6 @@ void BaseCar::setColor(string newColor) { this->color = newColor; }
 string BaseCar::getType() const { return "base"; }
 
 // Serialize/deserialize
-// this is for formatting into the text files, I had to ChatGPT this part (I was having constant errors)
 void BaseCar::serialize(std::ostream& out) const {
     out << carID << " " << model << " " << make << " " << year << " " << pricePerDay << " " << capacity << " " << color << " ";
 }
