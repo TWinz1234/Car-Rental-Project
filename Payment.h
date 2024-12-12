@@ -1,55 +1,59 @@
 #ifndef PAYMENT_H
 #define PAYMENT_H
-#include <string>
+
 #include <iostream>
-#include <fstream>
+#include <string>
+
+using namespace std;
 
 class Payment {
-protected:
-    static const std::string admin_ledger;
+private:
     int id;
-    long cardNum;
-    double amount;
+    int cardNum;
+    int amount;
     int secCode;
     int expDate;
-    std::string billAddress;
-    std::string nameCard;
+    string billAddress;
+    string nameCard;
 
 public:
-    // Constructors
-    Payment();
-    Payment(int id, long cardNum, double amount, int secCode, int expDate, std::string billAddress, std::string nameCard);
+    static const string admin_ledger;
 
-    // Setter and Getter Functions
+    Payment() noexcept;
+    Payment(int id, int cardNum, int amount, int secCode, int expDate, const string& billAddress, const string& nameCard);
+
+    // Getters
     int getId() const;
-    void setId(int id);
-    long getCardNum() const;
-    void setCardNum(long cardNum);
-    double getAmount() const;
-    void setAmount(double amount);
+    int getCardNum() const;
+    int getAmount() const;
     int getSecCode() const;
-    void setSecCode(int secCode);
     int getExpDate() const;
+    string getBillAddress() const;
+    string getNameCard() const;
+
+    // Setters
+    void setId(int id);
+    void setCardNum(int cardNum);
+    void setAmount(int amount);
+    void setSecCode(int secCode);
     void setExpDate(int expDate);
-    std::string getBillAddress() const;
-    void setBillAddress(const std::string& billAddress);
-    std::string getNameCard() const;
-    void setNameCard(const std::string& nameCard);
+    void setBillAddress(const string& billAddress);
+    void setNameCard(const string& nameCard);
 
     // Serialize and Deserialize
-    void serialize(std::ostream& out) const;
-    void deserialize(std::istream& in);
+    void serialize(ostream& out) const;
+    void deserialize(istream& in);
 
-    // Displaying Information
+    // Display
     void display() const;
 
-    // Ledger
+    // Ledger Operations
     void saveToLedger() const;
     void displayPaymentDetails() const;
 
-    // Static Methods
+    // Static Member Functions
     static Payment add();
     static bool update(int id);
 };
 
-#endif
+#endif // PAYMENT_H
