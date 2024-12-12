@@ -1,45 +1,38 @@
+// Updated main.cpp
 #include <iostream>
 #include <vector>
 #include <memory>
 #include <filesystem>
+#include "admin.h"
 #include "BaseCar.h"
 #include "FuelCar.h"
 #include "ElectricCar.h"
 #include "Customer.h"
-#include "Admin.h"
+#include "Payment.h"
 
 using namespace std;
 
 void displayMainMenu();
-
 void adminMenu(Admin& admin, vector<Customer>& customers, vector<shared_ptr<BaseCar>>& cars);
-void customerMenu(vector<shared_ptr<BaseCar>>& cars);
+void customerMenu(vector<shared_ptr<BaseCar>>& cars, vector<Customer>& customers);
 void addCar(Admin& admin, vector<shared_ptr<BaseCar>>& cars);
 void listCars(const vector<shared_ptr<BaseCar>>& cars);
-void rentCar(vector<shared_ptr<BaseCar>>& cars);
+void rentCar(vector<shared_ptr<BaseCar>>& cars, vector<Customer>& customers);
+void searchCars(const vector<shared_ptr<BaseCar>>& cars);
 
 int main() {
     cout << "Starting Car Rental System...\n" << endl;
 
-    // figure out where the file system is running
-    cout << "Current working directory: " << filesystem::current_path() << endl;
+    string relativePath = "./data"; // Relative directory for all data files
 
-    // load data - not sure how to make this so it isn't local
-    // windows prefix:
-    string customerFilePrefix = "../../..";
-    // mac prefix:
-    // string customerFilePrefix = "..";
-    vector<Customer> customers = Customer::readFromFile(customerFilePrefix + "/customers.txt");
-    vector<shared_ptr<BaseCar>> cars = BaseCar::readFromFile(customerFilePrefix + "/CarInventory.txt");
-
-    cout << "length of cars: " << cars.size() << endl;
+    vector<Customer> customers = Customer::readFromFile(relativePath + "/customers.txt");
+    vector<shared_ptr<BaseCar>> cars = BaseCar::readFromFile(relativePath + "/CarInventory.txt");
 
     Admin admin;
     admin.setInventory(cars);
 
     cout << "Loaded " << customers.size() << " customers and " << cars.size() << " cars.\n" << flush;
 
-    // choose between admin or customer
     int roleChoice;
 
     while (true) {
@@ -49,18 +42,18 @@ int main() {
 
         if (cin.fail()) {
             cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
             cout << "Invalid input. Please try again.\n";
             continue;
         }
 
         if (roleChoice == 1) {
-            customerMenu(cars);
+            customerMenu(cars, customers);
         } else if (roleChoice == 2) {
             string password;
             cout << "Enter admin password: ";
             cin >> password;
 
-            // authenticate admin passwrod (admin123)
             if (admin.authenticate(password)) {
                 adminMenu(admin, customers, cars);
             } else {
@@ -77,7 +70,6 @@ int main() {
     return 0;
 }
 
-// main menu -> run relevant functions
 void displayMainMenu() {
     cout << "\nCar Rental System Menu:\n"
          << "1. Customer\n"
@@ -85,7 +77,6 @@ void displayMainMenu() {
          << "3. Exit\n";
 }
 
-// reference to admin, vectors of customer and basecar
 void adminMenu(Admin& admin, vector<Customer>& customers, vector<shared_ptr<BaseCar>>& cars) {
     int choice;
     do {
@@ -97,14 +88,13 @@ void adminMenu(Admin& admin, vector<Customer>& customers, vector<shared_ptr<Base
              << "Enter your choice: ";
         cin >> choice;
 
-        // input validation -> clear the cin, repeat
         if (cin.fail()) {
             cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
             cout << "Invalid input. Please try again.\n";
             continue;
         }
 
-        // use a switch case for users, populate relevant lists
         switch (choice) {
             case 1:
                 admin.listInventory();
@@ -131,109 +121,100 @@ void adminMenu(Admin& admin, vector<Customer>& customers, vector<shared_ptr<Base
     } while (choice != 4);
 }
 
-// populate customer menu
-void customerMenu(vector<shared_ptr<BaseCar>>& cars) {
+void customerMenu(vector<shared_ptr<BaseCar>>& cars, vector<Customer>& customers) {
     int choice;
     do {
         cout << "\nCustomer Menu:\n"
              << "1. View Cars\n"
              << "2. Rent a Car\n"
-             << "3. Exit to Main Menu\n"
+             << "3. Search Cars\n"
+             << "4. Exit to Main Menu\n"
              << "Enter your choice: ";
         cin >> choice;
 
         if (cin.fail()) {
             cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
             cout << "Invalid input. Please try again.\n";
             continue;
         }
 
-        // use case for customer
         switch (choice) {
             case 1:
                 listCars(cars);
                 break;
             case 2:
-                rentCar(cars);
+                rentCar(cars, customers);
                 break;
             case 3:
+                searchCars(cars);
+                break;
+            case 4:
                 cout << "Returning to main menu...\n";
                 break;
             default:
                 cout << "Invalid choice. Please try again.\n";
         }
-    } while (choice != 3);
+    } while (choice != 4);
 }
 
-// add the car to the relevant inventory
-// *** to be fixed ***
-// this logic needs to be fixed -> if we enter whether it's electric or fuel, it needs to take that value and populate different menus
 void addCar(Admin& admin, vector<shared_ptr<BaseCar>>& cars) {
     int carType;
     cout << "Enter Car Type (1 = Fuel, 2 = Electric): ";
     cin >> carType;
 
-    // this part works
-    if (carType == 1) {
-        int carID, year, capacity;
-        double pricePerDay, tankCapacity;
-        string model, make, color, fuelType;
+    if (cin.fail()) {
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        cout << "Invalid input.\n";
+        return;
+    }
 
-        cout << "Enter Car ID: ";
-        cin >> carID;
-        cout << "Enter Model: ";
-        cin >> model;
-        cout << "Enter Make: ";
-        cin >> make;
-        cout << "Enter Year: ";
-        cin >> year;
-        cout << "Enter Price Per Day: ";
-        cin >> pricePerDay;
-        cout << "Enter Capacity: ";
-        cin >> capacity;
-        cout << "Enter Color: ";
-        cin >> color;
+    int carID = cars.size() + 1;
+    int year, capacity;
+    double pricePerDay;
+    string model, make, color;
+
+    cout << "Enter Model: ";
+    cin >> model;
+    cout << "Enter Make: ";
+    cin >> make;
+    cout << "Enter Year: ";
+    cin >> year;
+    cout << "Enter Price Per Day: ";
+    cin >> pricePerDay;
+    cout << "Enter Capacity: ";
+    cin >> capacity;
+    cout << "Enter Color: ";
+    cin >> color;
+
+    if (carType == 1) {
+        double tankCapacity;
+        string fuelType;
+        cout << "Enter Fuel Type: ";
+        cin >> fuelType;
         cout << "Enter Tank Capacity (gallons): ";
         cin >> tankCapacity;
-
-        // allocate and initiate in one step with make_shared
-        // auto allows it to take value of <FuelCar>
         auto car = make_shared<FuelCar>(carID, model, make, year, pricePerDay, capacity, color, fuelType, tankCapacity);
-        admin.addCar(car);
         cars.push_back(car);
     } else if (carType == 2) {
-        int carID, year, capacity, rangePerCharge;
-        double pricePerDay, batteryCapacity;
-        string model, make, color;
-
-        cout << "Enter Car ID: ";
-        cin >> carID;
-        cout << "Enter Model: ";
-        cin >> model;
-        cout << "Enter Make: ";
-        cin >> make;
-        cout << "Enter Year: ";
-        cin >> year;
-        cout << "Enter Price Per Day: ";
-        cin >> pricePerDay;
-        cout << "Enter Capacity: ";
-        cin >> capacity;
-        cout << "Enter Color: ";
-        cin >> color;
+        double batteryCapacity;
+        int rangePerCharge;
         cout << "Enter Battery Capacity (kWh): ";
         cin >> batteryCapacity;
         cout << "Enter Range Per Charge (miles): ";
         cin >> rangePerCharge;
-
         auto car = make_shared<ElectricCar>(carID, model, make, year, pricePerDay, capacity, color, batteryCapacity, rangePerCharge);
-        admin.addCar(car);
         cars.push_back(car);
     } else {
         cout << "Invalid car type.\n";
+        return;
     }
+
+    admin.addCar(cars.back());
+    cout << "Car added successfully.\n";
 }
 
-// Displays the list of cars available in the inventory
 void listCars(const vector<shared_ptr<BaseCar>>& cars) {
     if (cars.empty()) {
         cout << "No cars available in the inventory.\n";
@@ -245,9 +226,7 @@ void listCars(const vector<shared_ptr<BaseCar>>& cars) {
     }
 }
 
-// Rent car processing
-void rentCar(vector<shared_ptr<BaseCar>>& cars) {
-    // display empty if no cars are there
+void rentCar(vector<shared_ptr<BaseCar>>& cars, vector<Customer>& customers) {
     if (cars.empty()) {
         cout << "No cars available to rent.\n";
         return;
@@ -261,10 +240,56 @@ void rentCar(vector<shared_ptr<BaseCar>>& cars) {
         if ((*it)->getCarID() == carID) {
             cout << "You have rented the following car:\n";
             (*it)->display();
-            cars.erase(it); // Remove the car from inventory
+
+            Customer newCustomer;
+            newCustomer.setId(customers.size() + 1);
+            cout << "Enter your details:\n";
+            cout << "Name: ";
+            string name;
+            cin >> name;
+            newCustomer.setName(name);
+            cout << "Contact Number: ";
+            string contactNum;
+            cin >> contactNum;
+            newCustomer.setContactNum(contactNum);
+            
+            customers.push_back(newCustomer);
+            
+            Payment payment = Payment::add();
+            payment.saveToLedger();
+
+            cars.erase(it);
             return;
         }
     }
 
     cout << "Car with ID " << carID << " not found.\n";
+}
+
+void searchCars(const vector<shared_ptr<BaseCar>>& cars) {
+    cout << "Enter search criteria (1 = Model, 2 = Capacity): ";
+    int choice;
+    cin >> choice;
+
+    if (choice == 1) {
+        string model;
+        cout << "Enter model to search: ";
+        cin >> model;
+        for (const auto& car : cars) {
+            if (car->getModel() == model) {
+                car->display();
+            }
+        }
+    } else if (choice == 2) {
+        int capacity;
+        cout << "Enter capacity to search: ";
+        cin >> capacity;
+        for (const auto& car : cars) {
+            if (car->getCapacity() == capacity) {
+                car->display();
+            }
+        }
+    } else {
+        cout << "Invalid choice.\n";
+    }
 }
