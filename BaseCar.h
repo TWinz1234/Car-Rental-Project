@@ -3,6 +3,8 @@
 #include <string>
 #include <iostream>
 #include <sstream>
+#include <vector>
+#include <memory>
 using namespace std;
 
 class BaseCar

@@ -19,6 +19,7 @@ public:
     void addCar(const std::shared_ptr<BaseCar>& car);
     void listInventory() const;
     void processPayment(double amount) const;
+    void setInventory(std::vector<std::shared_ptr<BaseCar>> inv);
 };
 
 #endif

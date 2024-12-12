@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <memory>
+#include <filesystem>
 #include "BaseCar.h"
 #include "FuelCar.h"
 #include "ElectricCar.h"
@@ -24,10 +25,17 @@ int main() {
     cout << "Current working directory: " << filesystem::current_path() << endl;
 
     // load data - not sure how to make this so it isn't local
-    vector<Customer> customers = Customer::readFromFile("/Users/kevinbutler/Desktop/Books/School/Ramapo/Fall 2024/Computer Science 2/Projects/CarRental3/cmake-build-debug/customers.txt");
-    vector<shared_ptr<BaseCar>> cars = BaseCar::readFromFile("/Users/kevinbutler/Desktop/Books/School/Ramapo/Fall 2024/Computer Science 2/Projects/CarRental3/cmake-build-debug/CarInventory.txt");
+    // windows prefix:
+    string customerFilePrefix = "../../..";
+    // mac prefix:
+    // string customerFilePrefix = "..";
+    vector<Customer> customers = Customer::readFromFile(customerFilePrefix + "/customers.txt");
+    vector<shared_ptr<BaseCar>> cars = BaseCar::readFromFile(customerFilePrefix + "/CarInventory.txt");
+
+    cout << "length of cars: " << cars.size() << endl;
 
     Admin admin;
+    admin.setInventory(cars);
 
     cout << "Loaded " << customers.size() << " customers and " << cars.size() << " cars.\n" << flush;
 

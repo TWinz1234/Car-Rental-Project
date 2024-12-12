@@ -36,3 +36,9 @@ void Admin::listInventory() const {
 void Admin::processPayment(double amount) const {
     cout << "Payment of $" << amount << " processed successfully.\n";
 }
+
+void Admin::setInventory(std::vector<std::shared_ptr<BaseCar>> inv) {
+    for (const auto& car : inv) {
+        inventory.push_back(car);
+    }
+}
