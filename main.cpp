@@ -227,7 +227,10 @@ void listCars(const vector<shared_ptr<BaseCar>>& cars) {
     }
     cout << "Cars available for rent:\n";
     for (const auto& car : cars) {
-        car->display(); // Display each car's details, including rental status
+        if (car->isRented() == false) // Only outputs cars if they are available to rent
+        {
+            car->display(); // Display each car's details, including rental status
+        }
     }
 }
 
