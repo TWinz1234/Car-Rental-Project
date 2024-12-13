@@ -63,7 +63,7 @@ int main() {
                 adminMenu(admin, customers, cars);
             } else {
                 cout << "Invalid password. Please re-enter password.\n";
-                cin >> passowrd;
+                cin >> password;
             }
         } else if (roleChoice == 3) {
             cout << "Exiting the system. Goodbye!\n";
