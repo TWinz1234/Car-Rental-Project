@@ -1,24 +1,14 @@
 /*
 
-1: Payment processor class and header
-    -edit parameters
-        -> change credit card expiration to string
-        -> add to customer parameters
-        -> I have to click enter twice in the admin mainmenu after selecting "4"
-        -> Have user rent car based on the model -> error handle if we have repeat models
-        -> Enter in how many days you're renting the car
-        -> Generate rental ID for each customer
-        -> remove cin for "amount"
-        -> Fix issue of cin not existing for Billing Address in rent a car function
-        -> Put boolean value of "Rented" into inventory list -> default is false
-        -> update display of customer data in admin menu
-        -> get payment to work in customer data (admin menu)
+ *** Demo w/ Dr. Al-Juboori ***
+             Things to add:
+        -> change to view available cars for customer
+        -> if admin enters incorrect password -> re-enter password
+        [done] -> fix cin issue for model for customer -> input validation
+        -> composition / aggragation relationship of BaseCar & Customer/Admin -> fix UML 
+        -> add validation statement for user input customer rent car -> no negative rental days
+        [done] -> fix bugs with cin -> recheck the program
 
-        -> use add() and update() add multiple ways of paying, multiple rentals
-
-2: Fix the inventory list for customer and administrator
-    -Try to get files to be relative
-    -
-
-3: UML
-    -Update UML with new functions and features
+         extra credit:
+        -> use a try / catch block
+        -> try to use a search
