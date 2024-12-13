@@ -4,18 +4,18 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include <memory>
 
 using namespace std;
 
-/* Timmy - I needed to add more to the constructors, I was getting intiation errors (the constructors just had primitive datatypes
- *
- */
+// Timmy - I just expanded on your constructors since we added more
 
-// Constructors
+
+// default constructor
 BaseCar::BaseCar() {}
 
-BaseCar::BaseCar(int carID, string model, string make, int year, double pricePerDay, int capacity, string color) {
+// paramater constructor
+BaseCar::BaseCar(int carID, string model, string make, int year, double pricePerDay, int capacity, string color, bool rented)
+    : carID(carID), model(model), make(make), year(year), pricePerDay(pricePerDay), capacity(capacity), color(color), rented(rented) {
     setCarID(carID);
     setModel(model);
     setMake(make);
@@ -23,9 +23,10 @@ BaseCar::BaseCar(int carID, string model, string make, int year, double pricePer
     setPricePerDay(pricePerDay);
     setCapacity(capacity);
     setColor(color);
-}
 
-// Setter/getter functions
+}
+// Super class of Car, so we'll have a lot more data here
+// Setter & getter functions
 int BaseCar::getCarID() const { return carID; }
 void BaseCar::setCarID(int newCarID) { this->carID = newCarID; }
 
@@ -49,14 +50,27 @@ void BaseCar::setColor(string newColor) { this->color = newColor; }
 
 string BaseCar::getType() const { return "base"; }
 
-// Serialize/deserialize
+// Serialize/deserialize -> I looked this up and it said we need to do this to avoid the errors from adding to the list
+// ostream = out -> write to file, istream = in => input from file
 void BaseCar::serialize(std::ostream& out) const {
     out << carID << " " << model << " " << make << " " << year << " " << pricePerDay << " " << capacity << " " << color << " ";
 }
 
+// use this to display from file
 void BaseCar::deserialize(std::istream& in) {
     in >> carID >> model >> make >> year >> pricePerDay >> capacity >> color;
 }
+
+// use boolean value if the car is rented
+bool BaseCar::isRented() const {
+    return rented;
+}
+
+// set the value if it's rented
+void BaseCar::setRented(bool status) {
+    rented = status;
+}
+
 
 // Read/write from the file
 // use a vector so the function can grow -> the inventory list isn't defined for us
@@ -75,6 +89,7 @@ void BaseCar::saveToFile(string fileName, const vector<shared_ptr<BaseCar>> cars
     cout << "Car inventory saved to file: " << fileName << endl;
 }
 
+// Reads car inventory from a file, creates the subclass object(ElectricCar or FuelCar) based on the type of car in the file, and returns a vector of shared_ptr<BaseCar>
 vector<shared_ptr<BaseCar>> BaseCar::readFromFile(const string& fileName) {
     ifstream file(fileName);
     if (!file) {
@@ -112,15 +127,14 @@ vector<shared_ptr<BaseCar>> BaseCar::readFromFile(const string& fileName) {
     return cars;
 }
 
-// display case
+// display the common car components -> super class attributes
 void BaseCar::display() const {
-    cout << "----------------------------------------\n";
-    cout << "Car ID       : " << carID << endl;
-    cout << "Model        : " << model << endl;
-    cout << "Make         : " << make << endl;
-    cout << "Year         : " << year << endl;
-    cout << "Price Per Day: $" << pricePerDay << endl;
-    cout << "Capacity     : " << capacity << " persons" << endl;
-    cout << "Color        : " << color << endl;
-    cout << "----------------------------------------\n";
+    cout << "Car ID: " << carID << ", Model: " << model
+         << ", Make: " << make << ", Year: " << year
+         << ", Price Per Day: $" << pricePerDay
+         << ", Capacity: " << capacity
+         << ", Color: " << color
+         << ", Rented: " << (rented ? "Yes" : "No") << endl;
 }
+
+
