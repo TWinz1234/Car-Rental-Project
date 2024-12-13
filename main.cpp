@@ -1,7 +1,5 @@
-// Updated main.cpp
 #include <iostream>
 #include <vector>
-#include <memory>
 #include <random>
 #include <string>
 #include <filesystem>
@@ -14,6 +12,7 @@
 
 using namespace std;
 
+// function protoyping
 void displayMainMenu();
 void adminMenu(Admin& admin, vector<Customer>& customers, vector<shared_ptr<BaseCar>>& cars);
 void customerMenu(vector<shared_ptr<BaseCar>>& cars, vector<Customer>& customers);
@@ -23,10 +22,13 @@ void rentCar(vector<shared_ptr<BaseCar>>& cars, vector<Customer>& customers);
 void searchCars(const vector<shared_ptr<BaseCar>>& cars);
 void updateCustomerDisplay(const vector<Customer>& customers);
 
+
 int main() {
     cout << "Starting Car Rental System...\n" << endl;
 
-    string relativePath = "./data"; // Relative directory for all data files
+    // Relative directory for all data files -> create a data file if it doesn't exist
+    // we might need to stay with this because I'm having issues with the text files not saving
+    string relativePath = "./data"; 
 
     vector<Customer> customers = Customer::readFromFile(relativePath + "/customers.txt");
     vector<shared_ptr<BaseCar>> cars = BaseCar::readFromFile(relativePath + "/CarInventory.txt");
@@ -38,15 +40,14 @@ int main() {
 
     int roleChoice;
 
+    // load relevant menu based on main menu input
     while (true) {
         displayMainMenu();
         cout << "Enter your choice: ";
         cin >> roleChoice;
-        cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Fix double enter issue
 
         if (cin.fail()) {
             cin.clear();
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
             cout << "Invalid input. Please try again.\n";
             continue;
         }
@@ -81,6 +82,7 @@ void displayMainMenu() {
          << "3. Exit\n";
 }
 
+
 void adminMenu(Admin& admin, vector<Customer>& customers, vector<shared_ptr<BaseCar>>& cars) {
     int choice;
     do {
@@ -91,11 +93,9 @@ void adminMenu(Admin& admin, vector<Customer>& customers, vector<shared_ptr<Base
              << "4. Exit to Main Menu\n"
              << "Enter your choice: ";
         cin >> choice;
-        cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Fix double enter issue
 
         if (cin.fail()) {
             cin.clear();
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
             cout << "Invalid input. Please try again.\n";
             continue;
         }
@@ -123,6 +123,7 @@ void adminMenu(Admin& admin, vector<Customer>& customers, vector<shared_ptr<Base
     } while (choice != 4);
 }
 
+
 void customerMenu(vector<shared_ptr<BaseCar>>& cars, vector<Customer>& customers) {
     int choice;
     do {
@@ -133,43 +134,40 @@ void customerMenu(vector<shared_ptr<BaseCar>>& cars, vector<Customer>& customers
              << "4. Exit to Main Menu\n"
              << "Enter your choice: ";
         cin >> choice;
-        cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Fix double enter issue
 
         if (cin.fail()) {
             cin.clear();
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
             cout << "Invalid input. Please try again.\n";
             continue;
         }
 
         switch (choice) {
-            case 1:
-                listCars(cars);
-                break;
-            case 2:
-                rentCar(cars, customers);
-                break;
-            case 3:
-                searchCars(cars);
-                break;
-            case 4:
-                cout << "Returning to main menu...\n";
-                break;
-            default:
-                cout << "Invalid choice. Please try again.\n";
+        case 1:
+            listCars(cars); // Use the updated function here
+            break;
+        case 2:
+            rentCar(cars, customers);
+            break;
+        case 3:
+            searchCars(cars);
+            break;
+        case 4:
+            cout << "Returning to main menu...\n";
+            break;
+        default:
+            cout << "Invalid choice. Please try again.\n";
         }
     } while (choice != 4);
 }
+
 
 void addCar(Admin& admin, vector<shared_ptr<BaseCar>>& cars) {
     int carType;
     cout << "Enter Car Type (1 = Fuel, 2 = Electric): ";
     cin >> carType;
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
     if (cin.fail()) {
         cin.clear();
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
         cout << "Invalid input.\n";
         return;
     }
@@ -189,7 +187,6 @@ void addCar(Admin& admin, vector<shared_ptr<BaseCar>>& cars) {
     cin >> pricePerDay;
     cout << "Enter Capacity: ";
     cin >> capacity;
-    cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Fix double enter issue
     cout << "Enter Color: ";
     getline(cin, color);
 
@@ -200,7 +197,6 @@ void addCar(Admin& admin, vector<shared_ptr<BaseCar>>& cars) {
         getline(cin, fuelType);
         cout << "Enter Tank Capacity (gallons): ";
         cin >> tankCapacity;
-        cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Fix double enter issue
         auto car = make_shared<FuelCar>(carID, model, make, year, pricePerDay, capacity, color, fuelType, tankCapacity);
         car->setRented(false); // Set default rented status
         cars.push_back(car);
@@ -211,7 +207,6 @@ void addCar(Admin& admin, vector<shared_ptr<BaseCar>>& cars) {
         cin >> batteryCapacity;
         cout << "Enter Range Per Charge (miles): ";
         cin >> rangePerCharge;
-        cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Fix double enter issue
         auto car = make_shared<ElectricCar>(carID, model, make, year, pricePerDay, capacity, color, batteryCapacity, rangePerCharge);
         car->setRented(false); // Set default rented status
         cars.push_back(car);
@@ -229,28 +224,11 @@ void listCars(const vector<shared_ptr<BaseCar>>& cars) {
         cout << "No cars available in the inventory.\n";
         return;
     }
-
-    // Display header with consistent column spacing
-    cout << left << setw(10) << "Car ID" << setw(15) << "Model" << setw(15) << "Make"
-         << setw(8) << "Year" << setw(15) << "Price/Day" << setw(10) << "Capacity"
-         << setw(10) << "Color" << setw(10) << "Rented" << endl;
-
-    // Add a line separator for better readability
-    cout << string(85, '-') << endl;
-
-    // Display each car's details in well-aligned columns
+    cout << "Cars available for rent:\n";
     for (const auto& car : cars) {
-        cout << left << setw(10) << car->getCarID()
-             << setw(15) << car->getModel()
-             << setw(15) << car->getMake()
-             << setw(8) << car->getYear()
-             << setw(15) << fixed << setprecision(2) << car->getPricePerDay()
-             << setw(10) << car->getCapacity()
-             << setw(10) << car->getColor()
-             << setw(10) << (car->isRented() ? "Yes" : "No") << endl;
+        car->display(); // Display each car's details, including rental status
     }
 }
-
 
 
 void rentCar(vector<shared_ptr<BaseCar>>& cars, vector<Customer>& customers) {
@@ -275,49 +253,68 @@ void rentCar(vector<shared_ptr<BaseCar>>& cars, vector<Customer>& customers) {
     int rentalDays;
     cout << "Enter the number of days you want to rent the car: ";
     cin >> rentalDays;
-    cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Fix double enter issue
 
-    (*it)->setRented(true);
-    double totalCost = (*it)->getPricePerDay() * rentalDays;
-
+    // generate a random number for the rental ID -> between [1000,9999]
     random_device rd;
     mt19937 gen(rd());
     uniform_int_distribution<> dis(1000, 9999);
     int rentalID = dis(gen);
 
-    cout << "You have rented the following car:\n";
-    (*it)->display();
-    cout << "Total cost: $" << totalCost << "\n";
+    (*it)->setRented(true);
+    double totalCost = (*it)->getPricePerDay() * rentalDays;
+
+    cout << "\nRental Details:\n";
     cout << "Rental ID: " << rentalID << "\n";
+    cout << "Car Model: " << (*it)->getModel() << "\n";
+    cout << "Rental Days: " << rentalDays << "\n";
+    cout << "Total Cost: $" << fixed << setprecision(2) << totalCost << "\n";
 
+    //  Generate Customer ID -> start at 1 if it's blank, otherwise, CustomerID += 1
+    int nextCustomerID = 1;
+    if (!customers.empty()) {
+        nextCustomerID = customers.back().getId() + 1;
+    }
+    
+    string formattedCustomerID = (nextCustomerID < 10 ? "00" : (nextCustomerID < 100 ? "0" : "")) + to_string(nextCustomerID);
+
+    // Initiate and get customer information
     Customer newCustomer;
-    newCustomer.setId(customers.size() + 1);
-    cout << "Enter your details:\n";
+    string name, address, contactNum;
+
+    cout << "\nEnter your details:\n";
     cout << "Name: ";
-    string name;
     getline(cin, name);
-    newCustomer.setName(name);
+    cout << "Address: ";
+    getline(cin, address);
     cout << "Contact Number: ";
-    string contactNum;
     getline(cin, contactNum);
+
+    // use setter functions 
+    newCustomer.setId(nextCustomerID);
+    newCustomer.setName(name);
+    newCustomer.setAddress(address);
     newCustomer.setContactNum(contactNum);
-
     newCustomer.setRentalDetails((*it)->getCarID(), rentalDays, totalCost, rentalID);
-    customers.push_back(newCustomer);
 
-    Payment payment = Payment::add();
+    // Display the genreated Customer ID
+    cout << "Assigned Customer ID: " << formattedCustomerID << "\n";
+
+    // Payment Processing
+    // / Create and save payment, then link payment to specific customer
+    Payment payment = Payment::add(); 
+    newCustomer.setPaymentDetails(payment);
+    // Push to admin ledger file
     payment.saveToLedger();
-
     cout << "Payment recorded successfully.\n";
 
-    cars.erase(it);
+    // Push customer to back of list
+    customers.push_back(newCustomer); 
 }
 
 void searchCars(const vector<shared_ptr<BaseCar>>& cars) {
     cout << "Enter search criteria (1 = Model, 2 = Capacity): ";
     int choice;
     cin >> choice;
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
     if (choice == 1) {
         string model;
@@ -332,7 +329,6 @@ void searchCars(const vector<shared_ptr<BaseCar>>& cars) {
         int capacity;
         cout << "Enter capacity to search: ";
         cin >> capacity;
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
         for (const auto& car : cars) {
             if (car->getCapacity() == capacity) {
                 car->display();
@@ -344,12 +340,28 @@ void searchCars(const vector<shared_ptr<BaseCar>>& cars) {
 }
 
 void updateCustomerDisplay(const vector<Customer>& customers) {
+    if (customers.empty()) {
+        cout << "No customers found.\n";
+        return;
+    }
+
     cout << "Customer List:\n";
+    cout << "------------------------------------------------------\n";
+
     for (const auto& customer : customers) {
-        customer.display();
+        cout << "Customer ID: " << customer.getId() << "\n";
+        cout << "Name: " << customer.getName() << "\n";
+        cout << "Contact: " << customer.getContactNum() << "\n";
+
         cout << "Rental Details:\n";
-        customer.displayRentalDetails();
-        cout << "Payment Details:\n";
-        customer.displayPaymentDetails();
+        cout << "  Rental ID: " << customer.getRentalID() << "\n";
+        cout << "  Car ID: " << customer.getRentedCarID() << "\n";
+        cout << "  Rental Days: " << customer.getRentalDays() << "\n";
+        cout << "  Total Cost: $" << fixed << setprecision(2) << customer.getTotalCost() << "\n";
+
+        customer.displayPaymentDetails(); // Call the updated payment details method
+        cout << "------------------------------------------------------\n";
     }
 }
+
+
