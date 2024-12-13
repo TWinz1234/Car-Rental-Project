@@ -1,5 +1,7 @@
 #include "Payment.h"
 #include <fstream>
+#include <random>
+#include <ctime>
 
 using namespace std;
 
@@ -113,23 +115,35 @@ void Payment::displayPaymentDetails() const {
 // Static Member Functions
 Payment Payment::add() {
     Payment payment;
-    cout << "Enter Payment Details:\n";
-    cout << "ID: ";
-    cin >> payment.id;
-    cout << "Card Number: ";
-    cin >> payment.cardNum;
-    cout << "Amount: ";
-    cin >> payment.amount;
-    cout << "Security Code: ";
-    cin >> payment.secCode;
-    cout << "Expiration Date: ";
-    cin >> payment.expDate;
-    cin.ignore(); // Ignore the newline character
-    cout << "Billing Address: ";
-    getline(cin, payment.billAddress);
-    cout << "Name on Card: ";
-    getline(cin, payment.nameCard);
+
+    // Generate a random id
+    std::random_device rd;  // Non-deterministic random number generator
+    std::mt19937 gen(rd()); // Mersenne Twister generator
+    std::uniform_int_distribution<> dis(1000, 9999); // Random ID between 1000 and 9999
+
+    payment.id = dis(gen);  // Assign random id
+
+    std::cout << "Enter Payment Details:\n";
+    std::cout << "Card Number: ";
+    std::cin >> payment.cardNum;
+    std::cout << "Amount: ";
+    std::cin >> payment.amount;
+    std::cout << "Security Code: ";
+    std::cin >> payment.secCode;
+    std::cout << "Expiration Date: ";
+    std::cin >> payment.expDate;
+    std::cin.ignore();  // Ignore the newline character after the integer input
+
+    std::cout << "Billing Address: ";
+    std::getline(std::cin, payment.billAddress);
+    std::cout << "Name on Card: ";
+    std::getline(std::cin, payment.nameCard);
+
+    // Optionally, save to ledger
     payment.saveToLedger();
+
+    std::cout << "Payment ID (automatically generated): " << payment.id << std::endl;
+
     return payment;
 }
 
