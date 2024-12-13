@@ -1,10 +1,9 @@
 #ifndef CUSTOMER_H
 #define CUSTOMER_H
-
 #include <string>
 #include <vector>
 #include <fstream>
-#include <iostream>
+#include "Payment.h"
 using namespace std;
 
 class Customer {
@@ -13,14 +12,21 @@ private:
     string name;
     string address;
     string contactNum;
-    int payment;
+    double payment;
+    string licenseNumber;
+    string dateOfBirth;
+    int rentedCarID;      
+    int rentalDays;       
+    double totalCost;     
+    int rentalID;         
+    Payment paymentDetails;
+
 
 public:
-    // Constructors
     Customer();
-    Customer(int id, string name, string address, string contactNum, int payment);
+    Customer(int id, string name, string address, string contactNum, double payment);
 
-    // Getter and Setter methods
+    // setters and getters
     int getId() const;
     void setId(int id);
     string getName() const;
@@ -29,18 +35,38 @@ public:
     void setAddress(string address);
     string getContactNum() const;
     void setContactNum(string contactNum);
-    int getPayment() const;
-    void setPayment(int payment);
+    double getPayment() const;
+    void setPayment(double payment);
+    string getLicenseNumber() const;
+    void setLicenseNumber(const string& license);
+    string getDateOfBirth() const;
+    void setDateOfBirth(const string& dob);
 
-    // Serialize and Deserialize
-    // ** same as the other file
+
+    // display 
+    void setRentalDetails(int carID, int rentalDays, double totalCost, int rentalID);
+    void displayRentalDetails() const;
+
+    // use serialize for output to file, input to read from file
     void serialize(ostream& out) const;
     void deserialize(istream& in);
 
-    // Static methods for file management
+    // I had to look this part up -> save to file from customer vector 
     static void saveToFile(const string& fileName, const vector<Customer>& customers);
     static vector<Customer> readFromFile(const string& fileName);
     void display() const;
+
+    void displayPaymentDetails() const;
+
+    void setPaymentDetails(const Payment& payment);
+    Payment getPaymentDetails() const;
+
+    int getRentalID() const;
+    int getRentedCarID() const;
+    int getRentalDays() const;
+    double getTotalCost() const;
+
+
 };
 
 #endif // CUSTOMER_H
