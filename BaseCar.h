@@ -1,17 +1,17 @@
+
 #ifndef BASECAR_H
 #define BASECAR_H
 #include <string>
 #include <iostream>
 #include <sstream>
-#include <vector>
-#include <memory>
 using namespace std;
 
 class BaseCar
 {
 public:
     BaseCar();
-    BaseCar(int, string, string, int, double, int, string);
+    BaseCar(int carID, string model, string make, int year, double pricePerDay, int capacity, string color, bool rented = false);
+    // sets & getters
     int getCarID() const;
     void setCarID(int);
     string getModel() const;
@@ -26,17 +26,19 @@ public:
     void setCapacity(int);
     string getColor() const;
     void setColor(string);
+
+    // use virtual functions for electric and fuel cars -> enable polymorphism 
     virtual string getType() const;
     virtual void display() const;
-    virtual void serialize(std::ostream& out) const;
-    virtual void deserialize(std::istream& in);
+    virtual void serialize(ostream& out) const;
+    virtual void deserialize(istream& in);
     static void saveToFile(string fileName, const vector<shared_ptr<BaseCar>> cars);
     static vector<shared_ptr<BaseCar>> readFromFile(const string& fileName);
+    virtual bool isRented() const;
+    virtual void setRented(bool status);
 
 
-    // static add car function
-
-    // use protected for proper inheritance
+    // use protected for proper inheritance -> allow electric & fuel car to have access
 protected:
     int carID;
     string model;
@@ -45,6 +47,8 @@ protected:
     double pricePerDay;
     int capacity;
     string color;
+    bool rented;
+
 
 };
 
