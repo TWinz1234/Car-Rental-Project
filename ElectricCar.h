@@ -8,8 +8,8 @@ using namespace std;
 
 class ElectricCar : public BaseCar {
 private:
-    double batteryCapacity;  // Battery capacity in kWh
-    int rangePerCharge;      // Range in miles per full charge
+    double batteryCapacity;   
+    int rangePerCharge;      
 
 public:
     // Constructors
@@ -28,6 +28,10 @@ public:
     void serialize(ostream& out) const override;
     void deserialize(istream& in) override;
     void display() const override;
+
+    bool isRented() const override;
+    void setRented(bool status) override;
+
 };
 
 #endif
