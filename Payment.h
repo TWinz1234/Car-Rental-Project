@@ -36,7 +36,7 @@ public:
     void setCardNum(int cardNum);
     void setAmount(int amount);
     void setSecCode(int secCode);
-    void setExpDate(const string& expDate);
+    void setExpDate(string expDate);
     void setBillAddress(const string& billAddress);
     void setNameCard(const string& nameCard);
 
