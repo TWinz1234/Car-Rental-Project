@@ -62,7 +62,8 @@ int main() {
             if (admin.authenticate(password)) {
                 adminMenu(admin, customers, cars);
             } else {
-                cout << "Invalid password. Access denied.\n";
+                cout << "Invalid password. Please re-enter password.\n";
+                cin >> passowrd;
             }
         } else if (roleChoice == 3) {
             cout << "Exiting the system. Goodbye!\n";
