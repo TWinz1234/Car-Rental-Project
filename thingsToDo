@@ -2,11 +2,15 @@
 
  *** Demo w/ Dr. Al-Juboori ***
              Things to add:
-        -> change to view available cars for customer
-        -> if admin enters incorrect password -> re-enter password
+        [Timmy] -> change to view available cars for customer
+       [Ryan] -> if admin enters incorrect password -> re-enter password
+        [Ryan] -> also update report
+
+    
+       [Kaelah] -> composition / aggragation relationship of BaseCar & Customer/Admin -> fix UML 
+        [Kevin] -> add validation statement for user input customer rent car -> no negative rental days
+
         [done] -> fix cin issue for model for customer -> input validation
-        -> composition / aggragation relationship of BaseCar & Customer/Admin -> fix UML 
-        -> add validation statement for user input customer rent car -> no negative rental days
         [done] -> fix bugs with cin -> recheck the program
 
          extra credit:
