@@ -44,6 +44,16 @@ void FuelCar::deserialize(istream& in) {
 }
 
 void FuelCar::display() const {
-    BaseCar::display();
-    cout << "Fuel Type: " << fuelType << ", Tank Capacity: " << tankCapacity << " liters" << endl;
+    BaseCar::display(); // Display common attributes
+    cout << "Fuel Type: " << fuelType << ", Tank Capacity: " << tankCapacity << " gallons" << endl;
 }
+
+
+bool FuelCar::isRented() const {
+    return BaseCar::isRented();
+}
+
+void FuelCar::setRented(bool status) {
+    BaseCar::setRented(status);
+}
+
