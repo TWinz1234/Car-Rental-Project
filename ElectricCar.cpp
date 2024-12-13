@@ -45,7 +45,16 @@ void ElectricCar::deserialize(istream& in) {
 }
 
 void ElectricCar::display() const {
-    BaseCar::display();
-    cout << "Battery Capacity: " << batteryCapacity << " kWh, Range Per Charge: "
-         << rangePerCharge << " miles" << endl;
+    BaseCar::display(); // Display common attributes
+    cout << "Battery Capacity: " << batteryCapacity << " kWh, Range: " << rangePerCharge << " miles" << endl;
 }
+
+
+bool ElectricCar::isRented() const {
+    return BaseCar::isRented();
+}
+
+void ElectricCar::setRented(bool status) {
+    BaseCar::setRented(status);
+}
+
