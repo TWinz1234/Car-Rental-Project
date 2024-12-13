@@ -1,4 +1,3 @@
-// Updated main.cpp
 #include <iostream>
 #include <vector>
 #include <memory>
