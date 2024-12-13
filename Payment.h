@@ -12,7 +12,7 @@ private:
     int cardNum;
     int amount;
     int secCode;
-    int expDate;
+    string expDate;
     string billAddress;
     string nameCard;
 
@@ -20,14 +20,14 @@ public:
     static const string admin_ledger;
 
     Payment() noexcept;
-    Payment(int id, int cardNum, int amount, int secCode, int expDate, const string& billAddress, const string& nameCard);
+    Payment(int id, int cardNum, int amount, int secCode, string expDate, const string& billAddress, const string& nameCard);
 
     // Getters
     int getId() const;
     int getCardNum() const;
     int getAmount() const;
     int getSecCode() const;
-    int getExpDate() const;
+    string getExpDate() const;
     string getBillAddress() const;
     string getNameCard() const;
 
@@ -36,7 +36,7 @@ public:
     void setCardNum(int cardNum);
     void setAmount(int amount);
     void setSecCode(int secCode);
-    void setExpDate(int expDate);
+    void setExpDate(const string& expDate);
     void setBillAddress(const string& billAddress);
     void setNameCard(const string& nameCard);
 
