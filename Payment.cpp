@@ -1,7 +1,6 @@
 #include "Payment.h"
 #include <fstream>
-#include <random>
-#include <ctime>
+#include <string>
 
 using namespace std;
 
@@ -11,7 +10,7 @@ const string Payment::admin_ledger = "admin_ledger.txt";
 // Constructors
 Payment::Payment() noexcept {}
 
-Payment::Payment(int id, int cardNum, int amount, int secCode, int expDate, const string& billAddress, const string& nameCard)
+Payment::Payment(int id, int cardNum, int amount, int secCode, string expDate, const string& billAddress, const string& nameCard)
     : id(id), cardNum(cardNum), amount(amount), secCode(secCode), expDate(expDate), billAddress(billAddress), nameCard(nameCard) {}
 
 // Getters
@@ -31,7 +30,7 @@ int Payment::getSecCode() const {
     return secCode;
 }
 
-int Payment::getExpDate() const {
+string Payment::getExpDate() const {
     return expDate;
 }
 
@@ -60,7 +59,7 @@ void Payment::setSecCode(int secCode) {
     this->secCode = secCode;
 }
 
-void Payment::setExpDate(int expDate) {
+void Payment::setExpDate(string expDate) {
     this->expDate = expDate;
 }
 
@@ -115,35 +114,21 @@ void Payment::displayPaymentDetails() const {
 // Static Member Functions
 Payment Payment::add() {
     Payment payment;
-
-    // Generate a random id
-    std::random_device rd;  // Non-deterministic random number generator
-    std::mt19937 gen(rd()); // Mersenne Twister generator
-    std::uniform_int_distribution<> dis(1000, 9999); // Random ID between 1000 and 9999
-
-    payment.id = dis(gen);  // Assign random id
-
-    std::cout << "Enter Payment Details:\n";
-    std::cout << "Card Number: ";
-    std::cin >> payment.cardNum;
-    std::cout << "Amount: ";
-    std::cin >> payment.amount;
-    std::cout << "Security Code: ";
-    std::cin >> payment.secCode;
-    std::cout << "Expiration Date: ";
-    std::cin >> payment.expDate;
-    std::cin.ignore();  // Ignore the newline character after the integer input
-
-    std::cout << "Billing Address: ";
-    std::getline(std::cin, payment.billAddress);
-    std::cout << "Name on Card: ";
-    std::getline(std::cin, payment.nameCard);
-
-    // Optionally, save to ledger
+    cout << "Enter Payment Details:\n";
+    cout << "ID: "; /// **** ///
+    cin >> payment.id;
+    cout << "Card Number: ";
+    cin >> payment.cardNum;
+    cout << "Security Code: ";
+    cin >> payment.secCode;
+    cout << "Expiration Date: ";
+    cin >> payment.expDate;
+    cin.ignore(); // Ignore the newline character
+    cout << "Billing Address: ";
+    getline(cin, payment.billAddress);
+    cout << "Name on Card: ";
+    getline(cin, payment.nameCard);
     payment.saveToLedger();
-
-    std::cout << "Payment ID (automatically generated): " << payment.id << std::endl;
-
     return payment;
 }
 
