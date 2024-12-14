@@ -3,6 +3,7 @@
 #include <random>
 #include <string>
 #include <filesystem>
+
 #include "BaseCar.h"
 #include "FuelCar.h"
 #include "ElectricCar.h"
@@ -28,7 +29,7 @@ int main() {
 
     // Relative directory for all data files -> create a data file if it doesn't exist
     // we might need to stay with this because I'm having issues with the text files not saving
-    string relativePath = "./data"; 
+    string relativePath = "./data";
 
     vector<Customer> customers = Customer::readFromFile(relativePath + "/customers.txt");
     vector<shared_ptr<BaseCar>> cars = BaseCar::readFromFile(relativePath + "/CarInventory.txt");
@@ -144,7 +145,7 @@ void customerMenu(vector<shared_ptr<BaseCar>>& cars, vector<Customer>& customers
 
         switch (choice) {
         case 1:
-            listCars(cars); // Use the updated function here
+            listCars(cars);
             break;
         case 2:
             rentCar(cars, customers);
@@ -179,6 +180,7 @@ void addCar(Admin& admin, vector<shared_ptr<BaseCar>>& cars) {
     string model, make, color;
 
     cout << "Enter Model: ";
+    cin >> model;
     getline(cin, model);
     cout << "Enter Make: ";
     getline(cin, make);
@@ -189,6 +191,7 @@ void addCar(Admin& admin, vector<shared_ptr<BaseCar>>& cars) {
     cout << "Enter Capacity: ";
     cin >> capacity;
     cout << "Enter Color: ";
+    cin >> color;
     getline(cin, color);
 
     if (carType == 1) {
@@ -243,6 +246,7 @@ void rentCar(vector<shared_ptr<BaseCar>>& cars, vector<Customer>& customers) {
 
     string model;
     cout << "Enter the model of the car you want to rent: ";
+    cin >> model;
     getline(cin, model);
 
     auto it = find_if(cars.begin(), cars.end(), [&model](const shared_ptr<BaseCar>& car) {
@@ -255,8 +259,20 @@ void rentCar(vector<shared_ptr<BaseCar>>& cars, vector<Customer>& customers) {
     }
 
     int rentalDays;
-    cout << "Enter the number of days you want to rent the car: ";
-    cin >> rentalDays;
+
+    do {
+        cout << "Enter the number of days you want to rent the car: ";
+        cin >> rentalDays;
+
+        // if a negative is added, clear the cin, display error
+        if (cin.fail()) {
+            cin.clear();
+            cout << "Error: Please enter a valid integer value.\n";
+            rentalDays = -1;
+        } else if (rentalDays < 0) {
+            cout << "Error: Number of rental days cannot be negative. Please try again.\n";
+        }
+    } while (rentalDays < 0);
 
     // generate a random number for the rental ID -> between [1000,9999]
     random_device rd;
@@ -269,7 +285,7 @@ void rentCar(vector<shared_ptr<BaseCar>>& cars, vector<Customer>& customers) {
 
     cout << "\nRental Details:\n";
     cout << "Rental ID: " << rentalID << "\n";
-    cout << "Car Model: " << (*it)->getModel() << "\n";
+    cout << "Car Model: " << model << "\n";
     cout << "Rental Days: " << rentalDays << "\n";
     cout << "Total Cost: $" << fixed << setprecision(2) << totalCost << "\n";
 
@@ -278,7 +294,7 @@ void rentCar(vector<shared_ptr<BaseCar>>& cars, vector<Customer>& customers) {
     if (!customers.empty()) {
         nextCustomerID = customers.back().getId() + 1;
     }
-    
+
     string formattedCustomerID = (nextCustomerID < 10 ? "00" : (nextCustomerID < 100 ? "0" : "")) + to_string(nextCustomerID);
 
     // Initiate and get customer information
@@ -287,13 +303,14 @@ void rentCar(vector<shared_ptr<BaseCar>>& cars, vector<Customer>& customers) {
 
     cout << "\nEnter your details:\n";
     cout << "Name: ";
+    cin >> name;
     getline(cin, name);
     cout << "Address: ";
     getline(cin, address);
     cout << "Contact Number: ";
     getline(cin, contactNum);
 
-    // use setter functions 
+    // use setter functions
     newCustomer.setId(nextCustomerID);
     newCustomer.setName(name);
     newCustomer.setAddress(address);
@@ -305,14 +322,14 @@ void rentCar(vector<shared_ptr<BaseCar>>& cars, vector<Customer>& customers) {
 
     // Payment Processing
     // / Create and save payment, then link payment to specific customer
-    Payment payment = Payment::add(); 
+    Payment payment = Payment::add();
     newCustomer.setPaymentDetails(payment);
     // Push to admin ledger file
     payment.saveToLedger();
     cout << "Payment recorded successfully.\n";
 
     // Push customer to back of list
-    customers.push_back(newCustomer); 
+    customers.push_back(newCustomer);
 }
 
 void searchCars(const vector<shared_ptr<BaseCar>>& cars) {
